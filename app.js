@@ -2,23 +2,15 @@ const express = require('express');
 const app = express();
 const port = 4001;
 
+// Importar los módulos de enrutador
+const listViewRouter = require('./list-view-router');
+const listEditRouter = require('./list-edit-router');
 
-const tasks = [
-    {
-        id: '123456',
-        isCompleted: false,
-        description: 'Walk the dog'
-    },
-    {
-        id: '789012',
-        isCompleted: true,
-        description: 'Buy groceries'
-    }
-];
+app.use(express.json());
 
-app.get('/tasks', (req, res) => {
-    res.json(tasks);
-});
+// Usar los routers en rutas específicas
+app.use('/list-view', listViewRouter);
+app.use('/list-edit', listEditRouter);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

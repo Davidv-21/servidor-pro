@@ -1,27 +1,17 @@
+// list-view-router.js
+
 const express = require('express');
 const router = express.Router();
 
-const tasks = [
-    {
-        id: '123456',
-        isCompleted: false,
-        description: 'Walk the dog'
-    },
-    {
-        id: '789012',
-        isCompleted: true,
-        description: 'Buy groceries'
+// Middleware para manejar parámetros incorrectos
+router.param('id', (req, res, next, id) => {
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ error: 'Invalid parameter' });
     }
-];
-
-router.get('/completed', (req, res) => {
-    const completedTasks = tasks.filter(task => task.isCompleted);
-    res.json(completedTasks);
+    
+    next();
 });
 
-router.get('/incomplete', (req, res) => {
-    const incompleteTasks = tasks.filter(task => !task.isCompleted);
-    res.json(incompleteTasks);
-});
+// Rutas GET aquí...
 
 module.exports = router;

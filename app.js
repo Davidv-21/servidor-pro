@@ -1,17 +1,22 @@
+// app.js
+
 const express = require('express');
 const app = express();
-const port = 4001;
-
-// Importar los módulos de enrutador
-const listViewRouter = require('./list-view-router');
-const listEditRouter = require('./list-edit-router');
 
 app.use(express.json());
 
-// Usar los routers en rutas específicas
-app.use('/list-view', listViewRouter);
-app.use('/list-edit', listEditRouter);
+// Middleware para métodos HTTP válidos
+app.use((req, res, next) => {
+    const validMethods = ['GET', 'POST', 'PUT', 'DELETE'];
+    if (!validMethods.includes(req.method)) {
+        return res.status(400).json({ error: 'Invalid HTTP method' });
+    }
+    
+    next();
+});
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+// Rutas y otros middlewares aquí...
+
+app.listen(4001, () => {
+    console.log('Server is running on port 4001');
 });

@@ -1,21 +1,46 @@
-// app.js
-
 const express = require('express');
-const app = express();
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+dotenv.config({ path: 'David.env' });
+const listEditRouter = require('./list-edit-router');
+const listViewRouter = require('./list-view-router');
 
+const app = express();
 app.use(express.json());
 
-// Middleware para métodos HTTP válidos
-app.use((req, res, next) => {
-    const validMethods = ['GET', 'POST', 'PUT', 'DELETE'];
-    if (!validMethods.includes(req.method)) {
-        return res.status(400).json({ error: 'Invalid HTTP method' });
+// Función para verificar el token y proteger las rutas
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (token === null) {
+        return res.sendStatus(401);
     }
-    
-    next();
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) {
+            return res.sendStatus(403);
+        }
+        req.user = user;
+        next();
+    });
+}
+
+// Ruta de autenticación
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    const user = users.find(u => u.username === username && u.password === password);
+
+    if (!user) {
+        return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
+    }
+
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
+    res.json({ token });
 });
 
-// Rutas y otros middlewares aquí...
+app.use('/edit', listEditRouter); // Usa el router en la ruta /edit
+app.use('/view', listViewRouter); // Usa el router en la ruta /view
 
 app.listen(4001, () => {
     console.log('Server is running on port 4001');

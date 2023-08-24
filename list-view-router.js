@@ -1,17 +1,12 @@
-// list-view-router.js
-
 const express = require('express');
 const router = express.Router();
+const authenticateToken = require('./app').authenticateToken; 
 
-// Middleware para manejar parámetros incorrectos
-router.param('id', (req, res, next, id) => {
-    if (!/^\d+$/.test(id)) {
-        return res.status(400).json({ error: 'Invalid parameter' });
-    }
-    
-    next();
+
+
+// Ruta protegida
+router.get('/:id', authenticateToken, (req, res) => {
+    // Código para obtener detalles de una tarea
 });
-
-// Rutas GET aquí...
 
 module.exports = router;

@@ -1,29 +1,22 @@
-// list-edit-router.js
-
 const express = require('express');
 const router = express.Router();
+const authenticateToken = require('./app').authenticateToken;
 
-// Middleware para manejar errores en POST y PUT
-router.use((req, res, next) => {
-    if ((req.method === 'POST' || req.method === 'PUT') && !req.body) {
-        return res.status(400).json({ error: 'Empty body' });
-    }
-
-    if (req.method === 'POST') {
-        const { id, isCompleted, description } = req.body;
-        if (!id || typeof isCompleted !== 'boolean' || !description) {
-            return res.status(400).json({ error: 'Invalid or missing data' });
-        }
-    } else if (req.method === 'PUT') {
-        const { isCompleted, description } = req.body;
-        if (isCompleted === undefined && !description) {
-            return res.status(400).json({ error: 'No valid data to update' });
-        }
-    }
-    
-    next();
+// Rutas protegidas
+router.post('/create', authenticateToken, (req, res) => {
+    // Código para crear una tarea
+    res.send('Tarea creada exitosamente');
 });
 
-// Rutas POST, DELETE, PUT aquí...
+router.delete('/:id', authenticateToken, (req, res) => {
+    // Código para eliminar una tarea
+    res.send(`Tarea con ID ${req.params.id} eliminada exitosamente`);
+});
+
+router.put('/:id', authenticateToken, (req, res) => {
+    // Código para actualizar una tarea
+    res.send(`Tarea con ID ${req.params.id} actualizada exitosamente`);
+});
 
 module.exports = router;
+
